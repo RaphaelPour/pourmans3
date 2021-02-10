@@ -1,0 +1,19 @@
+version: '2.0'
+
+services:
+  pourmans3:
+    container_name: pourmans3_web
+    mem_limit: 300m
+    build: .
+    ports: 
+      - "2019:2019"
+    restart: always
+    labels:
+      caddy: url.raphaelpour.de
+      caddy.reverse_proxy: "{{upstreams http 8004}}"
+
+networks:
+  default:
+    external:
+      name: aproxymate_caddy
+
