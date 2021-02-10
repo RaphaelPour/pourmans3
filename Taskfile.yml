@@ -1,0 +1,44 @@
+version: '2'
+output: 'prefixed'
+
+includes:
+  _: https://raw.githubusercontent.com/FasterArbeit/task/master/go.yml
+
+vars:
+  BINARY_NAME: 'pourmans3'
+  REPOSITORY_NAME: 'pourmans3'
+  PATH: 'github.com/RaphaelPour/pourmans3'
+
+tasks:
+  changelog:
+    desc: Adds a changelog entry
+    cmds:
+      - ish: changelogger
+  release:
+    desc: Create a new release
+    cmds:
+      - ish: changelogger release new
+        ignore_error: yes
+      - git add CHANGELOG.md
+      - git commit -m "Bump version to $(changelogger release last --version-only)" -m "$(changelogger release last)"
+      - git tag -a "$(changelogger release last --version-only)" -m "Version: $(changelogger release last)"
+      - git push
+      - git push --tags
+    env:
+      CHANGELOGGER_VERSION_FORMAT: semver
+  coverage:
+    desc: Generate coverage report
+    cmds:
+      - |
+        echo "mode: atomic" > coverage/total
+        grep "^github.com" -h coverage/*.out | sort >> coverage/total
+        go tool cover -html=coverage/total -o coverage/coverage.html
+  ci:
+    desc: Run ci tasks
+    cmds:
+      - task: lint
+      - task: bin-cov
+      - task: test
+      - task: integration-test
+      - task: coverage
+
