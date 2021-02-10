@@ -15,7 +15,7 @@ const (
 	<head><title>pourmans3</title></head>
 	<body>
 	<h1 style='text-align:left'>pourmans3</h1>
-	<h3 style='text-align:left'><em>Link shortener, designed to store heave-payloaded urls.</em></h3>
+	<h3 style='text-align:left'><em>Link shortener, designed to store heave-payloaded urls</em></h3>
 	<hr>
 	<form method='POST'>
 	<input type='text' name='url'>
@@ -106,19 +106,11 @@ func main() {
 
 func RequestHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf(
-		"%s [%6s] %s\n",
+		"%s [%6s] %s: %#v\n",
 		time.Now().UTC().Format("2006-01-02T15:04:05"),
 		r.Method,
 		r.URL,
 	)
-
-	hosts := r.Header["Refferer"]
-	var host string
-	if len(hosts) == 0 {
-		host = "localhost"
-	} else {
-		host = hosts[0]
-	}
 
 	if r.Method == http.MethodPost {
 		if r.FormValue("url") == "" {
@@ -128,7 +120,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 		short := shorten(r.FormValue("url"))
 		links[short] = r.FormValue("url")
 
-		fmt.Fprintf(w, "%s/?%s", host, short)
+		fmt.Fprintf(w, "%s/?%s", r.Host, short)
 		return
 	}
 
@@ -148,7 +140,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 	if err := postTemplate.Execute(w,
 		ShortLink{
 			Links: links,
-			Host:  host,
+			Host:  r.Host,
 		}); err != nil {
 		fmt.Println("error rendering post template:", err)
 		return
