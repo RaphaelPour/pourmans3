@@ -15,7 +15,7 @@ const (
 	<head><title>pourmans3</title></head>
 	<body>
 	<h1 style='text-align:left'>pourmans3</h1>
-	<h3 style='text-align:left'><em>Link shortener, designed to store heave-payloaded urls</em></h3>
+	<h3 style='text-align:left'><em>Link shortener, designed to store heave-payloaded urls.</em></h3>
 	<hr>
 	<form method='POST'>
 	<input type='text' name='url'>
