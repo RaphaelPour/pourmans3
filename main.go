@@ -26,6 +26,12 @@ const (
 		<li><a href='?{{ $short }}'>{{ $short }}</a> -> <a href='{{ $long }}'>{{ $long }}</a></li>
 	{{ end }}
 	</ul>
+	<hr>
+	<ul style="font-family: monospace;">
+		<li>POST /{original link} -> {shortened link}</li>
+		<li>GET /{shortened link} -> {original link}</li>
+		<li>DELETE /{shortened link}</li>
+	</ul>
 	</body>
 	</html>
 	`
