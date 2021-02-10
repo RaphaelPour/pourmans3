@@ -10,6 +10,15 @@ vars:
   PATH: 'github.com/RaphaelPour/pourmans3'
 
 tasks:
+  bin:
+    desc: Build the go binary
+    cmds:
+      - CGO_ENABLED=0 go build -a -ldflags "-X main.BuildDate={{.DATE}} -X main.BuildVersion={{.VERSION}} -extldflags '-static' -s -w" -o ci-build/{{.BINARY_NAME}}
+    vars:
+      DATE:
+        sh: date '+%Y-%m-%dT%H:%M:%S%z'
+      VERSION:
+        sh: git describe --tags || git describe --always
   changelog:
     desc: Adds a changelog entry
     cmds:
