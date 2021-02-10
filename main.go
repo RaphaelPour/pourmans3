@@ -45,6 +45,11 @@ var (
 	}
 )
 
+type ShortLink struct {
+	Links map[string]string
+	Host  string
+}
+
 func shorten(link string) string {
 	hash.Reset()
 	hash.WriteString(link)
@@ -69,20 +74,19 @@ func main() {
 		return
 	}
 
-	postTemplate, err := template.New("test").Parse(POST_TEMPLATE)
+	postTemplate, err := template.New("post").Parse(POST_TEMPLATE)
 	if err != nil {
-		fmt.Println("error parsing html template:", err)
+		fmt.Println("error parsing post template:", err)
 		return
 	}
 
-	getTemplate, err := template.New("redirrect").Parse(GET_TEMPLATE)
+	getTemplate, err := template.New("get").Parse(GET_TEMPLATE)
 	if err != nil {
-		fmt.Println("error parsing html template:", err)
+		fmt.Println("error parsing get template:", err)
 		return
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(r.Header["Refferer"])
 		hosts := r.Header["Refferer"]
 		var host string
 		if len(hosts) == 0 {
@@ -99,12 +103,7 @@ func main() {
 			short := shorten(r.FormValue("url"))
 			links[short] = r.FormValue("url")
 
-			fmt.Fprintf(
-				w,
-				"%s/?%s",
-				host,
-				short,
-			)
+			fmt.Fprintf(w, "%s/?%s", host, short)
 			return
 		}
 
@@ -117,10 +116,7 @@ func main() {
 		}
 
 		if err := postTemplate.Execute(w,
-			struct {
-				Links map[string]string
-				Host  string
-			}{
+			ShortLink{
 				Links: links,
 				Host:  host,
 			}); err != nil {
